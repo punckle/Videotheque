@@ -7,6 +7,7 @@ use App\Entity\Director;
 use App\Entity\Movie;
 use App\Entity\Platform;
 use App\Entity\Type;
+use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -35,5 +36,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Actors', 'fa fa-clapperboard', Actor::class);
         yield MenuItem::linkToCrud('Types', 'fa fa-list', Type::class);
         yield MenuItem::linkToCrud('Platforms', 'fa fa-question', Platform::class);
+        yield MenuItem::linkToCrud('Users', 'fa fa-users', User::class);
     }
 }
