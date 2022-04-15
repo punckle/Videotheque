@@ -15,5 +15,5 @@ jobs:
     steps:
       - name: Test PhpStan level 8
         run: |
-          cd project/
+          cd project
           vendor/bin/phpstan analyse src --memory-limit=-1
