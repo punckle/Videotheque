@@ -4,8 +4,8 @@ install:
 
 start:
 	docker-compose up -d
-	@echo "started on http://127.0.0.1:8743/"
-	@echo "PMA on http://127.0.0.1:8083/"
+	@echo "started on http://127.0.0.1:8744/"
+	@echo "PMA on http://127.0.0.1:8084/"
 
 console:
 	docker exec -it www_videotheque bash
