@@ -37,7 +37,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $username = $request->request->get('username', '');
+        $username = $request->request->get('email', '');
 
         $request->getSession()->set(Security::LAST_USERNAME, $username);
 
@@ -53,8 +53,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $email = $request->get('email');
-        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+
+        if ($user === null) {
+            return new RedirectResponse($this->urlGenerator->generate('app_logout'));
+        }
 
         if ($user->isVerified() === false) {
             return new RedirectResponse($this->urlGenerator->generate('app_logout'));
@@ -66,7 +69,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
         // For example:
         //return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        return new RedirectResponse($this->urlGenerator->generate('app_register'));
+        return new RedirectResponse($this->urlGenerator->generate('app_home'));
     }
 
     protected function getLoginUrl(Request $request): string

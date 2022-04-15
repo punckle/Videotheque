@@ -12,23 +12,25 @@
         <div class="row mt-5">
             <div class="col-lg-3 col-12"></div>
             <div class="col-lg-6 col-12">
-                <div class="br-light py-3 px-3">
-                    <h1 class="text-center">Se connecter</h1>
+                <div class="bg-light py-3 px-3">
+                    <h1 class="text-center">Sign in</h1>
                     <form action="{{ path('app_login') }}" method="post">
                         <div class="form-group">
-                            <input type="text" value="{{ lastUsername }}" name="username" id="inputUsername" placeholder="Nom d'utilisateur" class="form-control" required autofocus>
+                            <input type="text" value="{{ lastUsername }}" name="email" id="inputUsername" placeholder="Email" class="form-control" required autofocus>
                         </div>
                         <div class="form-group">
-                            <input type="password" name="password" id="inputPassword" placeholder="Mot de passe" class="form-control" required>
+                            <input type="password" name="password" id="inputPassword" placeholder="Password" class="form-control" required>
                         </div>
 
                         <input type="hidden" name="_target_path" value="/admin"/>
 
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                        <button class="btn btn-lg btn-primary submit" type="submit">
-                            Se connecter
-                        </button>
+                        <div class="form-group d-flex justify-content-end">
+                            <button class="btn btn-lg btn-success submit" type="submit">
+                                Sign in
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
