@@ -1,76 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Vidéothèqe Manon & Xavier{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+
     {% block stylesheets %}
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Spartan&display=swap">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
-    {% block javascripts %}
-        {{ encore_entry_script_tags('app') }}
-    {% endblock %}
-</head>
-<body>
-<nav
-        class="navbar navbar-expand-lg navbar-light bg-light px-1"
-        {{ is_granted('ROLE_PREVIOUS_ADMIN') ? 'style="background-color: red !important"' }}
->
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{{ path('app_home') }}">
-            <p class="pl-2 d-inline font-weight-bold" style="color: #444;">
-                Cauldron Overflow
-            </p>
-        </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapsable" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+</head>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="">Vidéothèque</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div class="collapse navbar-collapse" id="navbar-collapsable">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('admin') }}">Admin</a>
+                    <a class="nav-link" href="">Accueil</a>
                 </li>
             </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if app.user %}
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="accountDropdownLink">
+                            {{ app.user.username }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            {% if "ROLE_ADMIN" in app.user.roles %}
+                                <a href="" class="dropdown-item submit">Paramètres logiciel</a>
+                                <a href="" class="dropdown-item submit">Liste des utilisateurs</a>
+                                <a href="" class="dropdown-item submit">Mettre à jour le mot de passe</a>
+                            {% endif %}
+                            <a href="" class="dropdown-item submit">Se déconnecter</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="" style="text-decoration: none; color: grey;">Se connecter</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+</header>
+<body onload="checkIframeLoaded();">
+{% if app.session is not null and app.session.started %}
+    {% set _flash_messages = app.session.flashbag.all %}
 
-            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                <div class="dropdown">
-                    <button
-                            class="dropdown-toggle btn"
-                            type="button"
-                            id="user-dropdown"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                    >
-                        <img
-                                src="{{ app.user.avatarUrl }}"
-                                alt="{{ app.user.fullName }} Avatar"
-                                width="26px">
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-dropdown">
-                        {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
-                            <li>
-                                <a class="dropdown-item" href="{{ path('app_home', {
-                                    '_switch_user': '_exit'
-                                }) }}">Exit Impersonation</a>
-                            </li>
-                        {% endif %}
-                        <li>
-                            <a class="dropdown-item" href="">Profile</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="">Log Out</a>
-                        </li>
-                    </ul>
-                </div>
-            {% else %}
-                <a class="nav-link text-black-50" href="">Log In</a>
-            {% endif %}
+    {% if _flash_messages|length > 0 %}
+        <div id="flash-messages">
+            {% for label, messages in _flash_messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }}">
+                        {{ message|trans|striptags }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endif %}
+
+{% block body %}{% endblock %}
+
+<footer>
+    <hr>
+    <div class="row text-center">
+        <div class="col-6">
+            <a href="" class="btn btn-light my-4 contact" target="_blank">Contactez-nous</a>
+        </div>
+        <div class="col-6">
+            <a href="" class="btn btn-light my-4 mentions">Mentions légales</a>
         </div>
     </div>
-</nav>
+</footer>
 
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    <script>
+        function checkIframeLoaded() {
+            // Get a handle to the iframe element
+            let iframe = document.getElementById('i_frame');
+            let iframeDoc = iframe.contentWindow;
+            // If iframe did not load
+            if (iframeDoc.length === 0) {
+                window.location.href = '/compte_google_error';
+            }
+        }
+    </script>
+{% endblock %}
 </body>
 </html>

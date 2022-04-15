@@ -24,6 +24,16 @@ services:
         networks:
             - dev
 
+    smtp:
+        image: mailhog/mailhog
+        container_name: mailhog_docker_videotheque
+        ports:
+            - 25:1025
+            - 0.0.0.0:8025:8025
+        restart: always
+        networks:
+            - dev
+
     www:
         build: php
         container_name: www_videotheque
@@ -35,6 +45,7 @@ services:
         restart: always
         links:
             - db
+            - smtp
         networks:
             - dev
 

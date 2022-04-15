@@ -6,6 +6,7 @@ start:
 	docker-compose up -d
 	@echo "started on http://127.0.0.1:8744/"
 	@echo "PMA on http://127.0.0.1:8084/"
+	@echo "Mailcatcher on http://127.0.0.1:8025/"
 
 console:
 	docker exec -it www_videotheque bash
