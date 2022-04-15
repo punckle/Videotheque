@@ -13,16 +13,16 @@ class Director
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $firstName;
+    private ?string $firstName;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $lastName;
+    private ?string $lastName;
 
     #[ORM\ManyToMany(targetEntity: Movie::class, mappedBy: 'director')]
-    private $movies;
+    private ArrayCollection $movies;
 
     public function __construct()
     {

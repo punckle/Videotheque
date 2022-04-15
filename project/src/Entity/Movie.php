@@ -13,34 +13,34 @@ class Movie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $title;
+    private ?string $title;
 
     #[ORM\Column(type: 'string', length: 4)]
-    private $year;
+    private ?string $year;
 
     #[ORM\ManyToMany(targetEntity: Director::class, inversedBy: 'movies')]
-    private $director;
+    private ArrayCollection $director;
 
     #[ORM\ManyToMany(targetEntity: Actor::class, inversedBy: 'movies')]
-    private $mainActors;
+    private ArrayCollection $mainActors;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $synopsis;
+    private ?string $synopsis;
 
     #[ORM\ManyToOne(targetEntity: Platform::class, inversedBy: 'movies')]
-    private $platform;
+    private ?Platform $platform;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $note;
+    private ?float $note;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $comment;
+    private ?string $comment;
 
     #[ORM\ManyToMany(targetEntity: Type::class, inversedBy: 'movies')]
-    private $type;
+    private ArrayCollection $type;
 
     public function __construct()
     {

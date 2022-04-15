@@ -13,16 +13,16 @@ class Platform
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    private ?string $name;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $comment;
+    private ?string $comment;
 
     #[ORM\OneToMany(mappedBy: 'platform', targetEntity: Movie::class)]
-    private $movies;
+    private ArrayCollection $movies;
 
     public function __construct()
     {
