@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+    db:
+        image: 'mariadb'
+        container_name: db_docker_videotheque
+        restart: always
+        volumes:
+        -   db-data:/var/lib/mariadb
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+        networks:
+            - dev
+
+    phpmyadmin:
+        image: phpmyadmin
+        container_name: phpmyadmin_docker_videotheque
+        restart: always
+        depends_on:
+            -   db
+        ports:
+            -   8084:80
+        environment:
+            PMA_HOST: db
+        networks:
+            - dev
+
+    www:
+        build: php
+        container_name: www_videotheque
+        ports:
+            - "8744:80"
+        volumes:
+            - ./php/vhosts:/etc/apache2/sites-enabled
+            - ./:/var/www
+        restart: always
+        links:
+            - db
+        networks:
+            - dev
+
+networks:
+    dev:
+
+volumes:
+    db-data:
+
