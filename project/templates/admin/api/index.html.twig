@@ -1,0 +1,25 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'Search on TheMovieDb' %}
+
+{% block page_content %}
+
+    <div class="position-relative overflow-hidden text-center">
+        <div class="jumbotron">
+            <div class="container">
+                <div>
+                    {{ form_start(apiSearchForm) }}
+                    <div class="row">
+                        <div class="col">{{ form_widget(apiSearchForm.title) }}</div>
+                        <div class="col">{{ form_widget(apiSearchForm.year) }}</div>
+                        <div class="col">{{ form_widget(apiSearchForm.director) }}</div>
+                        <div class="col">{{ form_widget(apiSearchForm.actor) }}</div>
+                        <div class="col"><button type="submit" class="btn btn-primary submit">Search</button></div>
+                    </div>
+                    {{ form_end(apiSearchForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
