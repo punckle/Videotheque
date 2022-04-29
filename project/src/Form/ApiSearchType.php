@@ -12,31 +12,10 @@ class ApiSearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', TextType::class, [
+            ->add('query', TextType::class, [
                 'label' => false,
                 'attr' => [
-                    'placeholder' => 'Title'
-                ],
-                'required' => false
-            ])
-            ->add('year', TextType::class, [
-                'label' => false,
-                'attr' => [
-                    'placeholder' => 'Year'
-                ],
-                'required' => false
-            ])
-            ->add('director', TextType::class, [
-                'label' => false,
-                'attr' => [
-                    'placeholder' => 'Director'
-                ],
-                'required' => false
-            ])
-            ->add('actor', TextType::class, [
-                'label' => false,
-                'attr' => [
-                    'placeholder' => 'Actor'
+                    'placeholder' => 'Query'
                 ],
                 'required' => false
             ])

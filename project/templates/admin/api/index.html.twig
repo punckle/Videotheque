@@ -10,10 +10,7 @@
                 <div>
                     {{ form_start(apiSearchForm) }}
                     <div class="row">
-                        <div class="col">{{ form_widget(apiSearchForm.title) }}</div>
-                        <div class="col">{{ form_widget(apiSearchForm.year) }}</div>
-                        <div class="col">{{ form_widget(apiSearchForm.director) }}</div>
-                        <div class="col">{{ form_widget(apiSearchForm.actor) }}</div>
+                        <div class="col">{{ form_widget(apiSearchForm.query) }}</div>
                         <div class="col"><button type="submit" class="btn btn-primary submit">Search</button></div>
                     </div>
                     {{ form_end(apiSearchForm) }}
@@ -22,4 +19,12 @@
         </div>
     </div>
 
+{#    <div id="app-search_results"></div>#}
+
 {% endblock %}
+
+{#{% block javascripts %}#}
+
+{#    {{ encore_entry_script_tags('searchResults') }}#}
+
+{#{% endblock %}#}
