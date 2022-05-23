@@ -7,6 +7,7 @@ use App\Entity\Director;
 use App\Entity\Movie;
 use App\Entity\MovieUser;
 use App\Entity\TvShow;
+use App\Entity\TvShowUser;
 use App\Entity\Type;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -78,6 +79,15 @@ class AddToDbService
             $movieUser = new MovieUser();
             $movieUser->setUser($user);
             $movieUser->setMovie($movie);
+
+            if (array_key_exists('rate', $movieData)) {
+                $movieUser->setRate((float) $movieData['rate']);
+            }
+
+            if (array_key_exists('comment', $movieData)) {
+                $movieUser->setComment((string) $movieData['comment']);
+            }
+
             $this->entityManager->persist($movieUser);
             $this->entityManager->flush();
         }
@@ -92,6 +102,9 @@ class AddToDbService
     {
         $tvShowsAlreadyInDb = [];
         $tvShowsAdded = [];
+
+        /** @var User $user */
+        $user = $this->security->getUser();
 
         foreach ($tvShows as $tvShowData) {
 
@@ -128,8 +141,24 @@ class AddToDbService
 
                 $tvShowsAdded[] = $tvShowData;
             } else {
+                $tvShow = $tvShowInDb['tvShow'];
                 $tvShowsAlreadyInDb[] = $tvShowData;
             }
+
+            $tvShowUser = new TvShowUser();
+            $tvShowUser->setUser($user);
+            $tvShowUser->setTvShow($tvShow);
+
+            if (array_key_exists('rate', $tvShowData)) {
+                $tvShowUser->setRate((float) $tvShowData['rate']);
+            }
+
+            if (array_key_exists('comment', $tvShowData)) {
+                $tvShowUser->setComment((string) $tvShowData['comment']);
+            }
+
+            $this->entityManager->persist($tvShowUser);
+            $this->entityManager->flush();
         }
 
         return [
@@ -156,7 +185,7 @@ class AddToDbService
         if (is_null($tvShow)) {
             return ['status' => 'OK'];
         } else {
-            return ['status' => 'KO'];
+            return ['status' => 'KO', 'tvShow' => $tvShow];
         }
     }
 

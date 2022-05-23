@@ -10,8 +10,39 @@
         <div class="card mb-3" v-if="(movies.length > 0 || tvShows.length > 0) && post === false">
           <div class="card-header">Movie(s) & Tv show(s) to add in my database</div>
           <div class="card-body">
-            <span class="badge bg-primary mr-2" v-for="movie in movies">{{ movie.title }}</span>
-            <span class="badge bg-secondary mr-2" v-for="tvShow in tvShows">{{ tvShow.name }}</span>
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Rate</th>
+                <th scope="col">Comment</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="movie in movies">
+                <td>
+                  <span class="badge bg-primary mr-2">{{ movie.title }}</span>
+                </td>
+                <td>
+                  <input v-model="movie.rate" type="text">
+                </td>
+                <td>
+                  <textarea v-model="movie.comment" rows="5"/>
+                </td>
+              </tr>
+              <tr v-for="tvShow in tvShows">
+                <td>
+                  <span class="badge bg-secondary mr-2">{{ tvShow.name }}</span>
+                </td>
+                <td>
+                  <input v-model="tvShow.rate" type="text">
+                </td>
+                <td>
+                  <textarea v-model="tvShow.comment" rows="5" cols="33"/>
+                </td>
+              </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 

@@ -39,10 +39,14 @@ class TvShow
     #[ORM\ManyToMany(targetEntity: Actor::class, inversedBy: 'tvShows')]
     private Collection $actors;
 
+    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: TvShowUser::class)]
+    private Collection $tvShowUsers;
+
     public function __construct()
     {
         $this->types = new ArrayCollection();
         $this->actors = new ArrayCollection();
+        $this->tvShowUsers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -166,6 +170,36 @@ class TvShow
     public function removeActor(Actor $actor): self
     {
         $this->actors->removeElement($actor);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TvShowUser>
+     */
+    public function getTvShowUsers(): Collection
+    {
+        return $this->tvShowUsers;
+    }
+
+    public function addTvShowUser(TvShowUser $tvShowUser): self
+    {
+        if (!$this->tvShowUsers->contains($tvShowUser)) {
+            $this->tvShowUsers[] = $tvShowUser;
+            $tvShowUser->setTvShow($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTvShowUser(TvShowUser $tvShowUser): self
+    {
+        if ($this->tvShowUsers->removeElement($tvShowUser)) {
+            // set the owning side to null (unless already changed)
+            if ($tvShowUser->getTvShow() === $this) {
+                $tvShowUser->setTvShow(null);
+            }
+        }
 
         return $this;
     }

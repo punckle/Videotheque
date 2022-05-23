@@ -37,9 +37,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: MovieUser::class)]
     private Collection $movieUsers;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: TvShowUser::class)]
+    private Collection $tvShowUsers;
+
     public function __construct()
     {
         $this->movieUsers = new ArrayCollection();
+        $this->tvShowUsers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -160,6 +164,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($movieUser->getUser() === $this) {
                 $movieUser->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TvShowUser>
+     */
+    public function getTvShowUsers(): Collection
+    {
+        return $this->tvShowUsers;
+    }
+
+    public function addTvShowUser(TvShowUser $tvShowUser): self
+    {
+        if (!$this->tvShowUsers->contains($tvShowUser)) {
+            $this->tvShowUsers[] = $tvShowUser;
+            $tvShowUser->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTvShowUser(TvShowUser $tvShowUser): self
+    {
+        if ($this->tvShowUsers->removeElement($tvShowUser)) {
+            // set the owning side to null (unless already changed)
+            if ($tvShowUser->getUser() === $this) {
+                $tvShowUser->setUser(null);
             }
         }
 
