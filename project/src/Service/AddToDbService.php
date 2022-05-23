@@ -5,24 +5,31 @@ namespace App\Service;
 use App\Entity\Actor;
 use App\Entity\Director;
 use App\Entity\Movie;
+use App\Entity\MovieUser;
 use App\Entity\TvShow;
 use App\Entity\Type;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Security;
 
 class AddToDbService
 {
     private EntityManagerInterface $entityManager;
+    private Security $security;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, Security $security)
     {
         $this->entityManager = $entityManager;
+        $this->security = $security;
     }
 
     public function addMovies(array $movies): array
     {
         $moviesAlreadyInDb = [];
         $moviesAdded = [];
+
+        /** @var User $user */
+        $user = $this->security->getUser();
 
         foreach ($movies as $movieData) {
             $movieInDb = $this->findMovieInDb($movieData['id']);
@@ -34,7 +41,6 @@ class AddToDbService
                 $movieCreditsUrl = 'https://api.themoviedb.org/3/movie/' . $movieData['id'] . '/credits?api_key=' . $apiKey . '&language=fr-FR';
                 $movieResult = json_decode((string) file_get_contents($movieUrl), true);
                 $movieCredits = json_decode((string) file_get_contents($movieCreditsUrl), true);
-
 
                 $movie = new Movie();
                 $movie->setTitle($movieData['title']);
@@ -65,8 +71,15 @@ class AddToDbService
 
                 $moviesAdded[] = $movieData;
             } else {
+                $movie = $movieInDb['movie'];
                 $moviesAlreadyInDb[] = $movieData;
             }
+
+            $movieUser = new MovieUser();
+            $movieUser->setUser($user);
+            $movieUser->setMovie($movie);
+            $this->entityManager->persist($movieUser);
+            $this->entityManager->flush();
         }
 
         return [
@@ -132,7 +145,7 @@ class AddToDbService
         if (is_null($movie)) {
             return ['status' => 'OK'];
         } else {
-            return ['status' => 'KO'];
+            return ['status' => 'KO', 'movie' => $movie];
         }
     }
 

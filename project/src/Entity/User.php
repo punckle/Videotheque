@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -31,6 +33,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private bool $isVerified = false;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: MovieUser::class)]
+    private Collection $movieUsers;
+
+    public function __construct()
+    {
+        $this->movieUsers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -122,6 +132,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MovieUser>
+     */
+    public function getMovieUsers(): Collection
+    {
+        return $this->movieUsers;
+    }
+
+    public function addMovieUser(MovieUser $movieUser): self
+    {
+        if (!$this->movieUsers->contains($movieUser)) {
+            $this->movieUsers[] = $movieUser;
+            $movieUser->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMovieUser(MovieUser $movieUser): self
+    {
+        if ($this->movieUsers->removeElement($movieUser)) {
+            // set the owning side to null (unless already changed)
+            if ($movieUser->getUser() === $this) {
+                $movieUser->setUser(null);
+            }
+        }
 
         return $this;
     }

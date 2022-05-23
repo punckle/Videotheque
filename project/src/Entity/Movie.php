@@ -33,12 +33,6 @@ class Movie
     #[ORM\ManyToOne(targetEntity: Platform::class, inversedBy: 'movies')]
     private ?Platform $platform;
 
-    #[ORM\Column(type: 'float', nullable: true)]
-    private ?float $note;
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $comment;
-
     #[ORM\ManyToMany(targetEntity: Type::class, inversedBy: 'movies')]
     private Collection $type;
 
@@ -54,11 +48,15 @@ class Movie
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $popularity;
 
+    #[ORM\OneToMany(mappedBy: 'movie', targetEntity: MovieUser::class)]
+    private Collection $movieUsers;
+
     public function __construct()
     {
         $this->director = new ArrayCollection();
         $this->mainActors = new ArrayCollection();
         $this->type = new ArrayCollection();
+        $this->movieUsers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,30 +160,6 @@ class Movie
         return $this;
     }
 
-    public function getNote(): ?float
-    {
-        return $this->note;
-    }
-
-    public function setNote(?float $note): self
-    {
-        $this->note = $note;
-
-        return $this;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
-    }
-
-    public function setComment(?string $comment): self
-    {
-        $this->comment = $comment;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Type>
      */
@@ -254,6 +228,36 @@ class Movie
     public function setPopularity(?float $popularity): self
     {
         $this->popularity = $popularity;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MovieUser>
+     */
+    public function getMovieUsers(): Collection
+    {
+        return $this->movieUsers;
+    }
+
+    public function addMovieUser(MovieUser $movieUser): self
+    {
+        if (!$this->movieUsers->contains($movieUser)) {
+            $this->movieUsers[] = $movieUser;
+            $movieUser->setMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMovieUser(MovieUser $movieUser): self
+    {
+        if ($this->movieUsers->removeElement($movieUser)) {
+            // set the owning side to null (unless already changed)
+            if ($movieUser->getMovie() === $this) {
+                $movieUser->setMovie(null);
+            }
+        }
 
         return $this;
     }
