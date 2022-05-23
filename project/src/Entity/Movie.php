@@ -22,10 +22,10 @@ class Movie
     private ?string $year;
 
     #[ORM\ManyToMany(targetEntity: Director::class, inversedBy: 'movies')]
-    private ArrayCollection $director;
+    private Collection $director;
 
     #[ORM\ManyToMany(targetEntity: Actor::class, inversedBy: 'movies')]
-    private ArrayCollection $mainActors;
+    private Collection $mainActors;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $synopsis;
@@ -40,7 +40,19 @@ class Movie
     private ?string $comment;
 
     #[ORM\ManyToMany(targetEntity: Type::class, inversedBy: 'movies')]
-    private ArrayCollection $type;
+    private Collection $type;
+
+    #[ORM\Column(type: 'integer')]
+    private $movieDbId;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $originalTitle;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $posterPath;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $popularity;
 
     public function __construct()
     {
@@ -194,6 +206,54 @@ class Movie
     public function removeType(Type $type): self
     {
         $this->type->removeElement($type);
+
+        return $this;
+    }
+
+    public function getMovieDbId(): ?int
+    {
+        return $this->movieDbId;
+    }
+
+    public function setMovieDbId(int $movieDbId): self
+    {
+        $this->movieDbId = $movieDbId;
+
+        return $this;
+    }
+
+    public function getOriginalTitle(): ?string
+    {
+        return $this->originalTitle;
+    }
+
+    public function setOriginalTitle(?string $originalTitle): self
+    {
+        $this->originalTitle = $originalTitle;
+
+        return $this;
+    }
+
+    public function getPosterPath(): ?string
+    {
+        return $this->posterPath;
+    }
+
+    public function setPosterPath(?string $posterPath): self
+    {
+        $this->posterPath = $posterPath;
+
+        return $this;
+    }
+
+    public function getPopularity(): ?float
+    {
+        return $this->popularity;
+    }
+
+    public function setPopularity(?float $popularity): self
+    {
+        $this->popularity = $popularity;
 
         return $this;
     }

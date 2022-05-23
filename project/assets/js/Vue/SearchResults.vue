@@ -5,12 +5,43 @@
 
     <div class="position-relative overflow-hidden">
 
-      {{ movies }}
-
-      <!-- TABS -->
-
       <div class="position-relative overflow-hidden mx-5 mt-2">
-        <b-tabs content-class="mt-3">
+
+        <div class="card mb-3" v-if="movies.length > 0 && post === false">
+          <div class="card-header">Movie(s) to add in my database</div>
+          <div class="card-body">
+            <span class="badge bg-primary mr-2" v-for="movie in movies">{{ movie.title }}</span>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <button v-if="movies.length > 0 && post === false" class="btn btn-primary" v-on:click="addToDatabase()">Add to my database</button>
+        </div>
+
+        <div v-if="post === true" class="alert alert-success" role="alert">
+          <i class="fas fa-check"></i> Your database has been updated !
+        </div>
+
+        <div class="card mb-3" v-if="post === true && moviesAlreadyInDb.length > 0">
+          <div class="card-header">Movie(s) that were already in your database</div>
+          <div class="card-body">
+            <span class="badge bg-primary mr-2" v-for="movie in moviesAlreadyInDb">{{ movie.title }}</span>
+          </div>
+        </div>
+
+        <div class="card mb-3" v-if="post === true && moviesAdded.length > 0">
+          <div class="card-header">Movie(s) that have been added to your database</div>
+          <div class="card-body">
+            <span class="badge bg-primary mr-2" v-for="movie in moviesAdded">{{ movie.title }}</span>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <button class="btn btn-primary" v-on:click="newSearch()">New search</button>
+        </div>
+
+        <!-- TABS -->
+        <b-tabs v-if="post === false" content-class="mt-3">
 
           <!-- MOVIES -->
 
@@ -39,9 +70,11 @@
                       <p v-if="movie.overview"><u>Overview</u>: {{ movie.overview }}</p>
                     </td>
                     <td>
-                      <button v-if="!movies.find(c => c.id === movie.id)" class="btn btn-primary" v-on:click="addMovie(movie)"> Add
+                      <button v-if="!movies.find(c => c.id === movie.id)" class="btn btn-primary" v-on:click="addMovie(movie)">
+                        <i class="fas fa-plus-square"></i>
                       </button>
-                      <button v-if="movies.find(c => c.id === movie.id)" class="btn btn-warning" v-on:click="removeMovie(movie)"> Remove
+                      <button v-if="movies.find(c => c.id === movie.id)" class="btn btn-warning" v-on:click="removeMovie(movie)">
+                        <i class="fas fa-minus-square"></i>
                       </button>
                     </td>
                   </tr>
@@ -128,7 +161,10 @@ export default {
     return {
       results: [],
       imgUrl: "https://image.tmdb.org/t/p/w200/",
-      movies: []
+      movies: [],
+      post: false,
+      moviesAlreadyInDb: [],
+      moviesAdded: []
     }
   },
   mounted() {
@@ -148,6 +184,20 @@ export default {
     removeMovie(movie) {
       let index = this.movies.indexOf(movie);
       this.movies.splice(index, 1);
+    },
+    addToDatabase() {
+      this.$http.post('/admin/api/add_to_database', {
+        movies: this.movies
+      }).then((res) => {
+        if (res.data.status === 'ok') {
+          this.post = true;
+          this.moviesAlreadyInDb = res.data.moviesAlreadyInDb;
+          this.moviesAdded = res.data.moviesAdded;
+        }
+      })
+    },
+    newSearch() {
+      window.location.href = '/admin?menuIndex=0&routeName=app_api&submenuIndex=-1';
     }
   }
 }

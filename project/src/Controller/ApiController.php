@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\ApiSearchType;
+use App\Service\AddToDbService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,6 +78,26 @@ class ApiController extends AbstractController
             'persons' => $persons,
             'movies' => $movies,
             'tvShows' => $tv
+        ]);
+    }
+
+    #[Route('/add_to_database', name: 'add_to_database')]
+    public function addToDatabase(Request $request, AddToDbService $addToDbService): JsonResponse
+    {
+        $datas = json_decode($request->getContent(), true);
+        $moviesAlreadyInDb = null;
+        $moviesAdded = null;
+
+        if (array_key_exists('movies', $datas)) {
+            $movies = $addToDbService->addMovies($datas['movies']);
+            $moviesAlreadyInDb = $movies['moviesAlreadyInDb'];
+            $moviesAdded = $movies['moviesAdded'];
+        }
+
+        return new JsonResponse([
+            'status' => 'ok',
+            'moviesAlreadyInDb' => $moviesAlreadyInDb,
+            'moviesAdded' => $moviesAdded
         ]);
     }
 }

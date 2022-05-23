@@ -19,7 +19,10 @@ class Type
     private ?string $name;
 
     #[ORM\ManyToMany(targetEntity: Movie::class, mappedBy: 'type')]
-    private ArrayCollection $movies;
+    private Collection $movies;
+
+    #[ORM\Column(type: 'integer')]
+    private $movieDbId;
 
     public function __construct()
     {
@@ -66,6 +69,18 @@ class Type
         if ($this->movies->removeElement($movie)) {
             $movie->removeType($this);
         }
+
+        return $this;
+    }
+
+    public function getMovieDbId(): ?int
+    {
+        return $this->movieDbId;
+    }
+
+    public function setMovieDbId(int $movieDbId): self
+    {
+        $this->movieDbId = $movieDbId;
 
         return $this;
     }

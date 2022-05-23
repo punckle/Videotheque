@@ -15,14 +15,14 @@ class Actor
     #[ORM\Column(type: 'integer')]
     private ?int $id;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $firstName;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private ?string $lastName;
-
     #[ORM\ManyToMany(targetEntity: Movie::class, mappedBy: 'mainActors')]
-    private ArrayCollection $movies;
+    private Collection $movies;
+
+    #[ORM\Column(type: 'integer')]
+    private $movieDbId;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $name;
 
     public function __construct()
     {
@@ -32,30 +32,6 @@ class Actor
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getFirstName(): ?string
-    {
-        return $this->firstName;
-    }
-
-    public function setFirstName(?string $firstName): self
-    {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): self
-    {
-        $this->lastName = $lastName;
-
-        return $this;
     }
 
     /**
@@ -81,6 +57,30 @@ class Actor
         if ($this->movies->removeElement($movie)) {
             $movie->removeMainActor($this);
         }
+
+        return $this;
+    }
+
+    public function getMovieDbId(): ?int
+    {
+        return $this->movieDbId;
+    }
+
+    public function setMovieDbId(int $movieDbId): self
+    {
+        $this->movieDbId = $movieDbId;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }
