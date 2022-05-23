@@ -19,10 +19,10 @@ class Director
     private Collection $movies;
 
     #[ORM\Column(type: 'integer')]
-    private $movieDbId;
+    private int $movieDbId;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $name;
+    private ?string $name;
 
     public function __construct()
     {

@@ -19,14 +19,18 @@ class Actor
     private Collection $movies;
 
     #[ORM\Column(type: 'integer')]
-    private $movieDbId;
+    private int $movieDbId;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $name;
+    private ?string $name;
+
+    #[ORM\ManyToMany(targetEntity: TvShow::class, mappedBy: 'actors')]
+    private Collection $tvShows;
 
     public function __construct()
     {
         $this->movies = new ArrayCollection();
+        $this->tvShows = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,6 +85,33 @@ class Actor
     public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TvShow>
+     */
+    public function getTvShows(): Collection
+    {
+        return $this->tvShows;
+    }
+
+    public function addTvShow(TvShow $tvShow): self
+    {
+        if (!$this->tvShows->contains($tvShow)) {
+            $this->tvShows[] = $tvShow;
+            $tvShow->addActor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTvShow(TvShow $tvShow): self
+    {
+        if ($this->tvShows->removeElement($tvShow)) {
+            $tvShow->removeActor($this);
+        }
 
         return $this;
     }

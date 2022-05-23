@@ -22,11 +22,15 @@ class Type
     private Collection $movies;
 
     #[ORM\Column(type: 'integer')]
-    private $movieDbId;
+    private int $movieDbId;
+
+    #[ORM\ManyToMany(targetEntity: TvShow::class, mappedBy: 'types')]
+    private Collection $tvShows;
 
     public function __construct()
     {
         $this->movies = new ArrayCollection();
+        $this->tvShows = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,6 +85,33 @@ class Type
     public function setMovieDbId(int $movieDbId): self
     {
         $this->movieDbId = $movieDbId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TvShow>
+     */
+    public function getTvShows(): Collection
+    {
+        return $this->tvShows;
+    }
+
+    public function addTvShow(TvShow $tvShow): self
+    {
+        if (!$this->tvShows->contains($tvShow)) {
+            $this->tvShows[] = $tvShow;
+            $tvShow->addType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTvShow(TvShow $tvShow): self
+    {
+        if ($this->tvShows->removeElement($tvShow)) {
+            $tvShow->removeType($this);
+        }
 
         return $this;
     }

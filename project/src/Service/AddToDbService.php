@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Actor;
 use App\Entity\Director;
 use App\Entity\Movie;
+use App\Entity\TvShow;
 use App\Entity\Type;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -74,11 +75,72 @@ class AddToDbService
         ];
     }
 
+    public function addTvShows(array $tvShows): array
+    {
+        $tvShowsAlreadyInDb = [];
+        $tvShowsAdded = [];
+
+        foreach ($tvShows as $tvShowData) {
+
+            $tvShowInDb = $this->findTvShowInDb($tvShowData['id']);
+
+            if ($tvShowInDb['status'] === 'OK') {
+
+                $apiKey = "aec4d5d7be64f05cf44a29476e490ca5";
+                $tvShowUrl = 'https://api.themoviedb.org/3/tv/' . $tvShowData['id'] . '?api_key=' . $apiKey . '&language=fr-FR';
+                $tvShowCreditsUrl = 'https://api.themoviedb.org/3/tv/' . $tvShowData['id'] . '/credits?api_key=' . $apiKey . '&language=fr-FR';
+                $tvShowResults = json_decode((string) file_get_contents($tvShowUrl), true);
+                $tvShowCredits = json_decode((string) file_get_contents($tvShowCreditsUrl), true);
+
+                $tvShow = new TvShow();
+                $tvShow->setTitle($tvShowData['name']);
+                $tvShow->setOriginalTitle($tvShowData['original_name']);
+                $tvShow->setPosterPath($tvShowData['poster_path']);
+                $tvShow->setMovieDbId($tvShowData['id']);
+                $tvShow->setPopularity($tvShowData['popularity']);
+                $tvShow->setYear(explode('-', $tvShowResults['first_air_date'])[0]);
+
+                $types = $this->getTypes($tvShowResults['genres']);
+                foreach ($types as $type) {
+                    $tvShow->addType($type);
+                }
+
+                $actors = $this->getActors($tvShowCredits['cast']);
+                foreach ($actors as $actor) {
+                    $tvShow->addActor($actor);
+                }
+
+                $this->entityManager->persist($tvShow);
+                $this->entityManager->flush();
+
+                $tvShowsAdded[] = $tvShowData;
+            } else {
+                $tvShowsAlreadyInDb[] = $tvShowData;
+            }
+        }
+
+        return [
+            'tvShowsAlreadyInDb' => $tvShowsAlreadyInDb,
+            'tvShowsAdded' => $tvShowsAdded
+        ];
+    }
+
     private function findMovieInDb(int $id): array
     {
         $movie = $this->entityManager->getRepository(Movie::class)->findOneBy(['movieDbId' => $id]);
 
         if (is_null($movie)) {
+            return ['status' => 'OK'];
+        } else {
+            return ['status' => 'KO'];
+        }
+    }
+
+    private function findTvShowInDb(int $id): array
+    {
+        $tvShow = $this->entityManager->getRepository(TvShow::class)->findOneBy(['movieDbId' => $id]);
+
+        if (is_null($tvShow)) {
             return ['status' => 'OK'];
         } else {
             return ['status' => 'KO'];

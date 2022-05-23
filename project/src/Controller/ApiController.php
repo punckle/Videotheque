@@ -87,6 +87,8 @@ class ApiController extends AbstractController
         $datas = json_decode($request->getContent(), true);
         $moviesAlreadyInDb = null;
         $moviesAdded = null;
+        $tvShowsAlreadyInDb = null;
+        $tvShowsAdded = null;
 
         if (array_key_exists('movies', $datas)) {
             $movies = $addToDbService->addMovies($datas['movies']);
@@ -94,10 +96,18 @@ class ApiController extends AbstractController
             $moviesAdded = $movies['moviesAdded'];
         }
 
+        if (array_key_exists('tvShows', $datas)) {
+            $tvShows = $addToDbService->addTvShows($datas['tvShows']);
+            $tvShowsAlreadyInDb = $tvShows['tvShowsAlreadyInDb'];
+            $tvShowsAdded = $tvShows['tvShowsAdded'];
+        }
+
         return new JsonResponse([
             'status' => 'ok',
             'moviesAlreadyInDb' => $moviesAlreadyInDb,
-            'moviesAdded' => $moviesAdded
+            'moviesAdded' => $moviesAdded,
+            'tvShowsAlreadyInDb' => $tvShowsAlreadyInDb,
+            'tvShowsAdded' => $tvShowsAdded
         ]);
     }
 }

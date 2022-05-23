@@ -7,32 +7,35 @@
 
       <div class="position-relative overflow-hidden mx-5 mt-2">
 
-        <div class="card mb-3" v-if="movies.length > 0 && post === false">
-          <div class="card-header">Movie(s) to add in my database</div>
+        <div class="card mb-3" v-if="(movies.length > 0 || tvShows.length > 0) && post === false">
+          <div class="card-header">Movie(s) & Tv show(s) to add in my database</div>
           <div class="card-body">
             <span class="badge bg-primary mr-2" v-for="movie in movies">{{ movie.title }}</span>
+            <span class="badge bg-secondary mr-2" v-for="tvShow in tvShows">{{ tvShow.name }}</span>
           </div>
         </div>
 
         <div class="mb-3">
-          <button v-if="movies.length > 0 && post === false" class="btn btn-primary" v-on:click="addToDatabase()">Add to my database</button>
+          <button v-if="(movies.length > 0 || tvShows.length > 0) && post === false" class="btn btn-primary" v-on:click="addToDatabase()">Add to my database</button>
         </div>
 
         <div v-if="post === true" class="alert alert-success" role="alert">
           <i class="fas fa-check"></i> Your database has been updated !
         </div>
 
-        <div class="card mb-3" v-if="post === true && moviesAlreadyInDb.length > 0">
-          <div class="card-header">Movie(s) that were already in your database</div>
+        <div class="card mb-3" v-if="post === true && (moviesAlreadyInDb.length > 0 || tvShowsAlreadyInDb.length > 0)">
+          <div class="card-header">Movie(s) & Tv show(s) that were already in your database</div>
           <div class="card-body">
             <span class="badge bg-primary mr-2" v-for="movie in moviesAlreadyInDb">{{ movie.title }}</span>
+            <span class="badge bg-secondary mr-2" v-for="tvShow in tvShowsAlreadyInDb">{{ tvShow.name }}</span>
           </div>
         </div>
 
-        <div class="card mb-3" v-if="post === true && moviesAdded.length > 0">
-          <div class="card-header">Movie(s) that have been added to your database</div>
+        <div class="card mb-3" v-if="post === true && (moviesAdded.length > 0 || tvShowsAdded.length > 0)">
+          <div class="card-header">Movie(s) & Tv show(s) that have been added to your database</div>
           <div class="card-body">
             <span class="badge bg-primary mr-2" v-for="movie in moviesAdded">{{ movie.title }}</span>
+            <span class="badge bg-secondary mr-2" v-for="tvShow in tvShowsAdded">{{ tvShow.name }}</span>
           </div>
         </div>
 
@@ -97,6 +100,7 @@
                   <tr>
                     <th scope="col">Poster</th>
                     <th scope="col">Name</th>
+                    <th scope="col"></th>
                   </tr>
                   </thead>
                   <tbody>
@@ -108,6 +112,14 @@
                       <p><u>French title</u>: {{ tvShow.name }}</p>
                       <p><u>Original title</u>: {{ tvShow.original_name }}</p>
                       <p v-if="tvShow.overview"><u>Overview</u>: {{ tvShow.overview }}</p>
+                    </td>
+                    <td>
+                      <button v-if="!tvShows.find(t => t.id === tvShow.id)" class="btn btn-primary" v-on:click="addTvShow(tvShow)">
+                        <i class="fas fa-plus-square"></i>
+                      </button>
+                      <button v-if="tvShows.find(t => t.id === tvShow.id)" class="btn btn-warning" v-on:click="removeTvShow(tvShow)">
+                        <i class="fas fa-minus-square"></i>
+                      </button>
                     </td>
                   </tr>
                   </tbody>
@@ -162,9 +174,12 @@ export default {
       results: [],
       imgUrl: "https://image.tmdb.org/t/p/w200/",
       movies: [],
+      tvShows: [],
       post: false,
       moviesAlreadyInDb: [],
-      moviesAdded: []
+      moviesAdded: [],
+      tvShowsAlreadyInDb: [],
+      tvShowsAdded: []
     }
   },
   mounted() {
@@ -181,18 +196,28 @@ export default {
     addMovie(movie) {
       this.movies.push(movie);
     },
+    addTvShow(tvShow) {
+      this.tvShows.push(tvShow);
+    },
     removeMovie(movie) {
       let index = this.movies.indexOf(movie);
       this.movies.splice(index, 1);
     },
+    removeTvShow(tvShow) {
+      let index = this.tvShows.indexOf(tvShow);
+      this.tvShows.splice(index, 1);
+    },
     addToDatabase() {
       this.$http.post('/admin/api/add_to_database', {
-        movies: this.movies
+        movies: this.movies,
+        tvShows: this.tvShows
       }).then((res) => {
         if (res.data.status === 'ok') {
           this.post = true;
           this.moviesAlreadyInDb = res.data.moviesAlreadyInDb;
           this.moviesAdded = res.data.moviesAdded;
+          this.tvShowsAlreadyInDb = res.data.tvShowsAlreadyInDb;
+          this.tvShowsAdded = res.data.tvShowsAdded;
         }
       })
     },

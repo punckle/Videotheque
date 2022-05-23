@@ -43,16 +43,16 @@ class Movie
     private Collection $type;
 
     #[ORM\Column(type: 'integer')]
-    private $movieDbId;
+    private int $movieDbId;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $originalTitle;
+    private ?string $originalTitle;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $posterPath;
+    private ?string $posterPath;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $popularity;
+    private ?float $popularity;
 
     public function __construct()
     {
