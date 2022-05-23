@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/app.scss') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/base.css') }}">
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
@@ -92,18 +93,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
-    <script>
-        function checkIframeLoaded() {
-            // Get a handle to the iframe element
-            let iframe = document.getElementById('i_frame');
-            let iframeDoc = iframe.contentWindow;
-            // If iframe did not load
-            if (iframeDoc.length === 0) {
-                window.location.href = '/compte_google_error';
-            }
-        }
-    </script>
+
 {% endblock %}
 </body>
 </html>

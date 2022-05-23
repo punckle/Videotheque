@@ -1,0 +1,7 @@
+div.masthead {
+    padding-top: 10rem;
+    padding-bottom: calc(10rem - 26px);
+    background-image: url("/assets/images/movie.jpg");
+    background-position: center center;
+    background-size: cover;
+}

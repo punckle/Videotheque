@@ -26,7 +26,7 @@ const store = new Vuex.Store({
 })
 
 new Vue({
-    el: '#app-search_results',
+    el: '#app_search-results',
     template: '<SearchResults/>',
     components: { SearchResults },
     store: store,

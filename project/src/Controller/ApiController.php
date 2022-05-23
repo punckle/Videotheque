@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Form\ApiSearchType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,10 +20,22 @@ class ApiController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+
+            return $this->redirectToRoute('api_query', [
+                'query' => $data['query']
+            ]);
         }
 
         return $this->render('admin/api/index.html.twig', [
             'apiSearchForm' => $form->createView()
+        ]);
+    }
+
+    #[Route('/query/{query}', name: 'api_query')]
+    public function getQuery(string $query): Response
+    {
+        return $this->render('admin/api/search_results.html.twig', [
+            'query' => $query
         ]);
     }
 
@@ -59,10 +72,11 @@ class ApiController extends AbstractController
             $tv = json_decode((string) file_get_contents($tvUrl));
         }
 
-        return $this->render('/admin/api/search_results.html.twig', [
+        return new JsonResponse([
+            'status' => 'ok',
             'persons' => $persons,
             'movies' => $movies,
-            'tv' => $tv
+            'tvShows' => $tv
         ]);
     }
 }
